@@ -11,6 +11,7 @@ let currOperator = "";
 let currOperatorSym = ""
 let hasOperated = false;
 let isResult = false;
+let equalsButton = document.querySelector(".operators #equals")
 
 //display
 function updateDisplay(){
@@ -61,7 +62,7 @@ operators.addEventListener("click", function (e){
     if(e.target.id === "")
         return;
     else if (e.target.id === "equals"){
-        if(saveValue !== ""){
+        if(saveValue !== "" && currOperator !== "" && value !== ""){
             topDisplay.textContent += " " + value + decimal;
             value = operate(saveValue, value + decimal, currOperator);
             decimal = "";
@@ -71,9 +72,28 @@ operators.addEventListener("click", function (e){
             }
             updateDisplay();
             isResult = true;
+            currOperator = "";
+            currOperatorSym = "";
         }
     }
     else{
+        if(value === ""){
+            botDisplay.textContent = "MATH ERROR";
+            clear(false);
+            return;
+        }
+        if(currOperator !== ""){
+            if(saveValue !== ""){
+            topDisplay.textContent += " " + value + decimal;
+            value = operate(saveValue, value + decimal, currOperator);
+            decimal = "";
+            if(value === undefined){
+                clear();
+                return;
+            }
+            updateDisplay();
+            isResult = true;
+        }}
         isResult = false;
         saveValue = botDisplay.textContent;
         switch(e.target.id){
