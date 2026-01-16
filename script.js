@@ -1,11 +1,16 @@
 let value = "";
 let saveValue = "";
-const MAX_DIGITS = 12;
+const MAX_DIGITS = 20;
 let decimal = "";
 let isDecimal = false;
 let botDisplay = document.querySelector(".display span");
 let topDisplay = document.querySelector(".display p");
 let numbers = document.querySelector(".numbers");
+let operators = document.querySelector(".operators");
+let currOperator = "";
+let currOperatorSym = ""
+let hasOperated = false;
+let isResult = false;
 
 //display
 function updateDisplay(){
@@ -30,6 +35,9 @@ function checkOverflow(){
 
 //Making numbers
 numbers.addEventListener("click", function (e){
+    if(isResult){
+        clear(false);
+    }
     if(!e.target.classList) return;
     let classes = Array.from(e.target.classList);
     if(classes.includes("clear")){
@@ -42,11 +50,58 @@ numbers.addEventListener("click", function (e){
         decimal = "."
         updateDisplay();
     }
-
     else if(classes.includes("number")){
         updateValues(e.target.textContent);
     }
-})
+});
+
+operators.addEventListener("click", function (e){
+    if(botDisplay.textContent === "MATH ERROR" || botDisplay.textContent === "OVERFLOW ERROR")
+        return;
+    if(e.target.id === "")
+        return;
+    else if (e.target.id === "equals"){
+        if(saveValue !== ""){
+            topDisplay.textContent += " " + value + decimal;
+            value = operate(saveValue, value + decimal, currOperator);
+            decimal = "";
+            if(value === undefined){
+                clear();
+                return;
+            }
+            updateDisplay();
+            isResult = true;
+        }
+    }
+    else{
+        isResult = false;
+        saveValue = botDisplay.textContent;
+        switch(e.target.id){
+            case "add":
+                currOperator = add;
+                currOperatorSym = "+";
+                break;
+            case "subtract":
+                currOperator = subtract;
+                currOperatorSym = "–";
+                break;
+            case "multiply":
+                currOperator = multiply;
+                currOperatorSym = "x";
+                break;
+            case "divide":
+                currOperator = divide;
+                currOperatorSym = "/"
+                break;
+        }
+        topDisplay.textContent = saveValue +  " " + " " + currOperatorSym;
+        resetValue();
+        updateDisplay();
+    }
+
+});
+
+
 
 
 //update value
@@ -79,15 +134,23 @@ function divide(a, b){
         clear();
         return;
     }
-    return a/b;
+    return Math.round((a / b) * 1e5) / 1e5;
 }
 
 //reset
-
-function clear(){
+function resetValue(){
     value = "";
-    decimal = "";
-    saveValue = "";
-    topDisplay.textContent = saveValue;
     isDecimal = false;
+    decimal = "";
+}
+function clear(updateText = true){
+    saveValue = "";
+    if(updateText)
+        topDisplay.textContent = saveValue;
+    else
+        topDisplay.textContent = value;
+    resetValue();
+    currOperator = "";
+    currOperatorSym = "";
+    isResult = false;
 }
