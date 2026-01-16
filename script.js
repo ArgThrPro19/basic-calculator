@@ -62,7 +62,7 @@ operators.addEventListener("click", function (e){
     if(e.target.id === "")
         return;
     else if (e.target.id === "equals"){
-        if(saveValue !== "" && currOperator !== "" && value !== ""){
+        if(saveValue !== "" && currOperator !== "" && (value !== "" || decimal !== "" || decimal !== ".")){
             topDisplay.textContent += " " + value + decimal;
             value = operate(saveValue, value + decimal, currOperator);
             decimal = "";
@@ -77,13 +77,13 @@ operators.addEventListener("click", function (e){
         }
     }
     else{
-        if(value === ""){
+        if(value === "" && (decimal === "." || decimal === "")){
             botDisplay.textContent = "MATH ERROR";
             clear(false);
             return;
         }
         if(currOperator !== ""){
-            if(saveValue !== ""){
+            if(saveValue !== "" && (value !== "" || decimal !== "" || decimal !== ".")){
             topDisplay.textContent += " " + value + decimal;
             value = operate(saveValue, value + decimal, currOperator);
             decimal = "";
